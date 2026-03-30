@@ -93,3 +93,10 @@ The build process:
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+DATABASE_URL=p
+PORT=3000
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development 
+BOOTSTRAP_ADMIN=false
+JWT_SECRET=your_jwt_secret_key
+VITE_BACKEND_URL = /api

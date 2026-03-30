@@ -13,7 +13,7 @@ export default async function bootstrap() {
     return;
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@asrdelivery.com";
   const adminPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || "adminpassword", 10) ;
 
   if (!adminEmail || !adminPassword) {  
