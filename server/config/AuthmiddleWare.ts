@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { accessVerify } from "./jwt";
+import { accessVerify } from "./jwt.js";
 
 export const AuthmiddleWare = async (
   req: Request,

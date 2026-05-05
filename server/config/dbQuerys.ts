@@ -1,5 +1,5 @@
-import { admin, company_settings, packages, users } from "../shared/schema"
-import { db } from "./config"
+import { admin, company_settings, packages, users } from "../shared/schema.js"
+import { db } from "./config.js"
 import { eq } from "drizzle-orm"
 
 

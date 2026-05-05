@@ -1,5 +1,5 @@
-import { db } from "../config/config";
-import { admin, company_settings, office_locations, packages, types_of_deliveries } from "../shared/schema";
+import { db } from "../config/config.js";
+import { admin, company_settings, office_locations, packages, types_of_deliveries } from "../shared/schema.js";
 import { eq } from "drizzle-orm";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";

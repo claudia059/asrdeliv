@@ -1,9 +1,9 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { trackingPackage, getAdminByEmail, getAllPackage, trackingNumberExists, insertPackage, updatePackage, deletePackage, fetchSettings, UpdateSettings, updateSetting, patchPackage } from "./dbQuerys";
+import { trackingPackage, getAdminByEmail, getAllPackage, trackingNumberExists, insertPackage, updatePackage, deletePackage, fetchSettings, UpdateSettings, updateSetting, patchPackage } from "./dbQuerys.js";
 import bcrypt  from "bcrypt";
-import  {accessToken, accessVerify, removeToken } from "./jwt";
-import { AuthmiddleWare } from "./AuthmiddleWare";
+import  { accessToken, accessVerify } from "./jwt.js";
+import { AuthmiddleWare } from "./AuthmiddleWare.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix all routes with /api

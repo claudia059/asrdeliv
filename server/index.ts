@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./config/routes";
+import { registerRoutes } from "./config/routes.js";
 import cookieParse from "cookie-parser";
-import bootstrap from "./Hooks/bootstrap";
+import bootstrap from "./Hooks/bootstrap.js";
 import cors from "cors";
 
 const app = express();
