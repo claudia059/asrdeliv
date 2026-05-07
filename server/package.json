@@ -5,10 +5,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsx --watch index.ts",
-    "start": "node dist/index.js",
+    "start": "drizzle-kit migrate && node dist/index.js",
     "build": "tsc",
     "check": "tsc --noEmit",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
