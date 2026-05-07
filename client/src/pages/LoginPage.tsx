@@ -28,7 +28,7 @@ export function LoginPage() {
     try {
       const res = await login({ email, password });
       console.log(res);
-      // setLocation("/admin");
+     setLocation("/admin");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An error occurred during login"
