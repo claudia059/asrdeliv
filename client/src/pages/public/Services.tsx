@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import { ArrowRight, FileBadge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useServices } from "@/hooks/use-shippments";
@@ -40,11 +39,16 @@ export function Services() {
               <p className="text-muted-foreground leading-relaxed flex-1">{service.description}</p>
               <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
                 <span className="font-bold text-lg text-foreground">{service.price || 'Contact for price'}</span>
-                <Link href={`https://wa.me/2349065480499?text=Hello%20I%20am%20interested%20in%20the%20service%20${encodeURIComponent(service.title)}`} target="_blank">
+                <a
+                  href={`https://wa.me/2349065480499?text=Hello%20I%20am%20interested%20in%20the%20service%20${encodeURIComponent(service.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex"
+                >
                   <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 font-semibold gap-1">
-                    <Link to="https://wa.me/2349065480499">Talk to Agent</Link> <ArrowRight className="w-4 h-4" />
+                    Talk to Agent <ArrowRight className="w-4 h-4" />
                   </Button>
-                </Link>
+                </a>
               </div>
             </div>
           ))}

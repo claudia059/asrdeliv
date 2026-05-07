@@ -24,7 +24,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { type InsertService, type Service } from "server/shared/schema";
+type InsertService = {
+  title: string;
+  description: string;
+  price: string;
+  icon: string;
+};
+
+type Service = {
+  id: number;
+  title: string;
+  description: string;
+  price?: string;
+  icon?: string;
+};
 
 export function AdminServices() {
   const { data: services, isLoading } = useServices();

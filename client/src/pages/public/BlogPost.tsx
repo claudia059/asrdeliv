@@ -1,12 +1,12 @@
-import { useRoute, Link } from "wouter";
+import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { usePost } from "@/hooks/use-posts";
 import { Button } from "@/components/ui/button";
 
 export function BlogPost() {
-  const [, params] = useRoute("/blog/:id");
-  const id = params?.id ? parseInt(params.id) : 0;
+  const params = useParams();
+  const id = params.id ? parseInt(params.id) : 0;
   const { data: post, isLoading } = usePost(id);
 
   if (isLoading) {
@@ -29,7 +29,7 @@ export function BlogPost() {
       <div className="max-w-3xl mx-auto px-4 py-32 text-center">
         <h1 className="text-3xl font-display font-bold mb-4">Post Not Found</h1>
         <p className="text-muted-foreground mb-8">The article you are looking for does not exist.</p>
-        <Link href="/blog">
+        <Link to="/blog">
           <Button variant="outline" className="rounded-xl">Back to Blog</Button>
         </Link>
       </div>
@@ -39,7 +39,7 @@ export function BlogPost() {
   return (
     <article className="py-16 md:py-24 bg-white min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <Link href="/blog">
+        <Link to="/blog">
           <Button variant="ghost" className="mb-8 -ml-4 text-muted-foreground hover:text-foreground group">
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" /> 
             Back to all posts

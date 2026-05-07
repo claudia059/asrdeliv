@@ -25,7 +25,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { type InsertPost, type Post } from "server/shared/schema";
+type InsertPost = {
+  title: string;
+  content: string;
+};
+
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+  publishedAt?: string;
+};
 
 export function AdminPosts() {
   const { data: posts, isLoading } = usePosts();

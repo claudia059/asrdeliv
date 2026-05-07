@@ -1,102 +1,44 @@
-// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-// import { api, buildUrl } from "@shared/routes";
-// import { type InsertPost } from "server/shared/schema";
-// import { useToast } from "@/hooks/use-toast";
-// import { authFetch } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
 
-// export function usePosts() {
-//   return useQuery({
-//     queryKey: [api.posts.list.path],
-//     queryFn: async () => {
-//       const res = await authFetch(api.posts.list.path);
-//       if (!res.ok) throw new Error("Failed to fetch posts");
-//       return api.posts.list.responses[200].parse(await res.json());
-//     },
-//   });
-// }
+export function usePosts() {
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-// export function usePost(id: number) {
-//   return useQuery({
-//     queryKey: [api.posts.get.path, id],
-//     queryFn: async () => {
-//       const url = buildUrl(api.posts.get.path, { id });
-//       const res = await authFetch(url);
-//       if (res.status === 404) return null;
-//       if (!res.ok) throw new Error("Failed to fetch post");
-//       return api.posts.get.responses[200].parse(await res.json());
-//     },
-//   });
-// }
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
-// export function useCreatePost() {
-//   const queryClient = useQueryClient();
-//   const { toast } = useToast();
+  return { data, isLoading };
+}
 
-//   return useMutation({
-//     mutationFn: async (data: InsertPost) => {
-//       const validated = api.posts.create.input.parse(data);
-//       const res = await authFetch(api.posts.create.path, {
-//         method: api.posts.create.method,
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(validated),
-//       });
-//       if (!res.ok) throw new Error("Failed to create post");
-//       return api.posts.create.responses[201].parse(await res.json());
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: [api.posts.list.path] });
-//       toast({ title: "Success", description: "Post created successfully" });
-//     },
-//     onError: (err) => {
-//       toast({ title: "Error", description: err.message, variant: "destructive" });
-//     }
-//   });
-// }
+export function usePost(_id: number) {
+  const [data, setData] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-// export function useUpdatePost() {
-//   const queryClient = useQueryClient();
-//   const { toast } = useToast();
+  useEffect(() => {
+    setIsLoading(false);
+  }, [_id]);
 
-//   return useMutation({
-//     mutationFn: async ({ id, ...updates }: { id: number } & Partial<InsertPost>) => {
-//       const validated = api.posts.update.input.parse(updates);
-//       const url = buildUrl(api.posts.update.path, { id });
-//       const res = await authFetch(url, {
-//         method: api.posts.update.method,
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(validated),
-//       });
-//       if (!res.ok) throw new Error("Failed to update post");
-//       return api.posts.update.responses[200].parse(await res.json());
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: [api.posts.list.path] });
-//       toast({ title: "Success", description: "Post updated successfully" });
-//     },
-//     onError: (err) => {
-//       toast({ title: "Error", description: err.message, variant: "destructive" });
-//     }
-//   });
-// }
+  return { data, isLoading };
+}
 
-// export function useDeletePost() {
-//   const queryClient = useQueryClient();
-//   const { toast } = useToast();
+export function useCreatePost() {
+  return {
+    mutateAsync: async (_data: any) => null,
+    isPending: false,
+  };
+}
 
-//   return useMutation({
-//     mutationFn: async (id: number) => {
-//       const url = buildUrl(api.posts.delete.path, { id });
-//       const res = await authFetch(url, { 
-//         method: api.posts.delete.method,
-//       });
-//       if (!res.ok) throw new Error("Failed to delete post");
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: [api.posts.list.path] });
-//       toast({ title: "Success", description: "Post deleted successfully" });
-//     },
-//     onError: (err) => {
-//       toast({ title: "Error", description: err.message, variant: "destructive" });
-//     }
-//   });
-// }
+export function useUpdatePost() {
+  return {
+    mutateAsync: async (_data: any) => null,
+    isPending: false,
+  };
+}
+
+export function useDeletePost() {
+  return {
+    mutate: async (_id: number) => null,
+    isPending: false,
+  };
+}

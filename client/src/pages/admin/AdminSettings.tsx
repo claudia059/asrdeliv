@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { useMutation } from "@tanstack/react-query";
 import { authFetch } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,8 +19,22 @@ export function AdminSettings() {
     address: "",
   });
 
-  const { user } = useAuth();
+  const { fetchUser } = useAuth();
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+  const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetchUser()
+      .then((value) => {
+        if (active) setUser(value);
+      })
+      .catch(() => null);
+    return () => {
+      active = false;
+    };
+  }, [fetchUser]);
 
   const [adminForm, setAdminForm] = useState({
     username: "",
@@ -37,36 +50,44 @@ export function AdminSettings() {
     }
   }, [user]);
 
-  const updateAdmin = useMutation({
-    mutationFn: async (payload: any) => {
-      if (!user) throw new Error('Not authenticated');
+  const updateAdmin = async (payload: any) => {
+    if (!user) {
+      toast({ title: 'Error', description: 'Not authenticated', variant: 'destructive' });
+      return;
+    }
+
+    setIsPending(true);
+
+    try {
       const res = await authFetch(`/api/admins/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      console.log(res);
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({ message: 'Failed to update admin' }));
-        // throw new Error(err.message || 'Failed to update admin');
         toast({ title: 'Error', description: err.message || 'Failed to update admin', variant: 'destructive' });
         return;
-        
       }
+
+      toast({ title: 'Success', description: 'Account updated' });
       return res.json();
-    },
-    onSuccess: () => toast({ title: 'Success', description: 'Account updated' }),
-    onError: (err: any) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
-  });
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'Failed to update admin', variant: 'destructive' });
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   // Sync form data when settings arrive (only once)
   const [settingsInitialized, setSettingsInitialized] = useState(false);
   useEffect(() => {
     if (!settingsInitialized && settings && Object.keys(settings).length > 0) {
       setFormData({
-        phone: settings.phone || "",
-        email: settings.email || "",
-        address: settings.address || "",
+        phone: settings?.phone || "",
+        email: settings?.email || "",
+        address: settings?.address || "",
       });
       setSettingsInitialized(true);
     }
@@ -100,7 +121,7 @@ export function AdminSettings() {
       payload.newPassword = adminForm.newPassword;
     }
 
-    await updateAdmin.mutateAsync(payload);
+    await updateAdmin(payload);
     // clear password fields on success
     setAdminForm((s) => ({ ...s, currentPassword: '', newPassword: '', confirmPassword: '' }));
   };
@@ -208,8 +229,8 @@ export function AdminSettings() {
                 </div>
               </CardContent>
               <CardFooter className="bg-muted/10 border-t border-border px-6 py-4 flex justify-end">
-                <Button type="submit" size="lg" disabled={updateAdmin.isPending} className="rounded-xl shadow-lg shadow-primary/20 gap-2 min-w-[140px]">
-                  <Key className="w-4 h-4" /> {updateAdmin.isPending ? 'Saving...' : 'Save Account'}
+                <Button type="submit" size="lg" disabled={isPending} className="rounded-xl shadow-lg shadow-primary/20 gap-2 min-w-[140px]">
+                  <Key className="w-4 h-4" /> {isPending ? 'Saving...' : 'Save Account'}
                 </Button>
               </CardFooter>
             </Card>

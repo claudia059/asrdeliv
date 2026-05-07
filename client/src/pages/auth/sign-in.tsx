@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -17,35 +17,23 @@ export default function SignIn() {
     email: "",
     password: ""
   });
-  // rememberMe: false,
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await login(formData.email, formData.password);
-      if(res?.message){
-        toast({
-          title: "Login successful",
-          description: res?.message,
-        });
-        return nav("/admin", {replace: true});
-      }else{
-        toast({
-          title: "Login failed",
-          description:"An error occurred during login",
-          variant: "destructive",
-        });
-        return;
-      }
+      const res = await login(formData);
+      toast({
+        title: "Login successful",
+        description: res.message,
+      });
+      nav("/admin", { replace: true });
     } catch (error: any) {
       toast({
         title: "Login failed",
-        description:"An error occurred during login",
+        description: error?.message || "An error occurred during login",
         variant: "destructive",
       });
-      return;
     }
-
   };
 
   return (
@@ -143,9 +131,9 @@ export default function SignIn() {
             </div>
 
             <p className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/auth/sign-up">
-                <a className="font-normal text-primary-600 hover:text-primary-700">Sign up</a>
+              Don't have an account? {" "}
+              <Link to="/register" className="font-normal text-primary-600 hover:text-primary-700">
+                Sign up
               </Link>
             </p>
           </CardContent>

@@ -34,7 +34,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const token = await accessToken(user.email);
       const nd = process.env.NODE_ENV === "production" ? true : false;
-      res.cookie("tooken", token, {
+      res.cookie("token", token, {
         httpOnly: true,
         secure: nd,
         sameSite: "strict",
@@ -51,12 +51,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // logut  
 
 
-  app.post(`${api}/auth/logout`, async (req: Request, res: Response) =>  {
+  app.post(`${api}/auth/logout`, async (_req: Request, res: Response) =>  {
     try {
-      const token  =  req.cookies?.token;
-
       const nd = process.env.NODE_ENV === "production" ? true : false;
-      res.clearCookie("tooken", {
+      res.clearCookie("token", {
         httpOnly: true,
         secure: nd,
         sameSite: "strict",
@@ -65,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
      return res.status(200).json({ message: "Logout successful", logout: true });
     } catch (err) {
-     return res.status(500).json({ message: "Login failed" });
+     return res.status(500).json({ message: "Logout failed" });
     }
   })
 
@@ -93,24 +91,19 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
   
   // all package
   
-  app.get( `${api}/auth/packages`, async (req: Request, res: Response) => {
+  app.get(`${api}/auth/packages`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
-
       const packages = await getAllPackage();
-      if(!packages){
-        return res.status(401).json({message: "No package found"});
-      }
       return res.status(200).json(packages);
     } catch (error) {
       console.log("AsrErr: " + error);
-     return res.status(500).json({ message: "Failed to fetch packages" });
-      
+      return res.status(500).json({ message: "Failed to fetch packages" });
     }
   })
 
   // newPackage
 
-  app.post(`${api}/auth/add/package`, async (req: Request, res: Response) => {
+  app.post(`${api}/auth/add/package`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const body = req.body;
       const packages = {
@@ -125,20 +118,20 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
 
       const r = await insertPackage(packages);
 
-          if(!r){
-            return res.status(401).json({message: "error creating package"});
-          }
-        return res.status(200).json({message: " package created"});
-      } catch (error) {
-        console.log("AsrErr: " + error);
-      return res.status(500).json({ message: "Failed to creating package" });
-        
+      if (!r) {
+        return res.status(409).json({ message: "Package already exists or could not be created" });
       }
+
+      return res.status(200).json({ message: "Package created" });
+    } catch (error) {
+      console.log("AsrErr: " + error);
+      return res.status(500).json({ message: "Failed to create package" });
+    }
   })
 
   // updatePackage
  
-  app.put(`${api}/auth/update/package`, async (req: Request, res: Response) =>{
+  app.put(`${api}/auth/update/package`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const body = req.body;
       const packages = {
@@ -152,19 +145,17 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
       };
 
       const r = await updatePackage(packages);
-        if(!r){
-            return res.status(401).json({message: "error updating package"});
-          }
-        return res.status(200).json({message: " package updated"});
-
-      } catch (error) {
-        console.log("AsrErr: " + error);
-        return res.status(500).json({ message: "Failed to updating package" });
-        
+      if (!r) {
+        return res.status(404).json({ message: "Package not found" });
       }
+      return res.status(200).json({ message: "Package updated" });
+    } catch (error) {
+      console.log("AsrErr: " + error);
+      return res.status(500).json({ message: "Failed to update package" });
+    }
   })
 
-  app.patch(`${api}/auth/patch/package`, async (req: Request, res: Response) =>{
+  app.patch(`${api}/auth/patch/package`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const body = req.body;
       const packages = {
@@ -178,57 +169,53 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
       };
 
       const r = await patchPackage(packages);
-        if(!r){
-            return res.status(401).json({message: "error updating package"});
-          }
-        return res.status(200).json({message: " package updated"});
-
-      } catch (error) {
-        console.log("AsrErr: " + error);
-        return res.status(500).json({ message: "Failed to updating package" });
-        
+      if (!r) {
+        return res.status(404).json({ message: "Package not found" });
       }
+      return res.status(200).json({ message: "Package updated" });
+    } catch (error) {
+      console.log("AsrErr: " + error);
+      return res.status(500).json({ message: "Failed to update package" });
+    }
   })
   
   
   // delete package
   
-  app.delete(`${api}/auth/del/:trackingNumber`, async (req: Request, res: Response) =>{
+  app.delete(`${api}/auth/del/:trackingNumber`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
-      
       const trackingNumber = req.params.trackingNumber;
       const r = await deletePackage(trackingNumber);
 
-        if(!r){
-            return res.status(401).json({message: "error deleting package"});
-          }
-        return res.status(200).json({message: " package deleted"});
-
-      } catch (error) {
-        console.log("AsrErr: " + error);
-        return res.status(500).json({ message: "Failed to deleting package" });
-        
+      if (!r) {
+        return res.status(404).json({ message: "Package not found" });
       }
+      return res.status(200).json({ message: "Package deleted" });
+    } catch (error) {
+      console.log("AsrErr: " + error);
+      return res.status(500).json({ message: "Failed to delete package" });
+    }
   })
 
 
   // trackingNumber
   
-  app.get( `${api}/auth/packages/:trackingNumber`, async (req: Request, res: Response) => {
+  app.get(`${api}/auth/packages/:trackingNumber`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const trackingNumber = req.params.trackingNumber;
-      if(!trackingNumber) return res.status(402).json({message: "No Tracking Number provided"});
+      if (!trackingNumber) {
+        return res.status(400).json({ message: "No tracking number provided" });
+      }
 
       const packages = await trackingNumberExists(trackingNumber);
-
-      if(!packages){
-        return res.status(401).json({message: "No Tracking Number found"});
+      if (!packages) {
+        return res.status(404).json({ message: "Tracking number not found" });
       }
-      return res.status(200).json({shipment: packages, message: "Tracking Number  exists"});
+
+      return res.status(200).json({ shipment: packages, message: "Tracking number exists" });
     } catch (error) {
       console.log("AsrErr: " + error);
-     return res.status(500).json({ message: "Failed to fetch Tracking Number" });
-      
+      return res.status(500).json({ message: "Failed to fetch tracking number" });
     }
   })
 
@@ -256,36 +243,38 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
   // Get all settings
 
 
-  app.get(`${api}/auth/settings`, async (req:Request, res:Response) => {
+  app.get(`${api}/auth/settings`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const r = await fetchSettings();
-      if(!r) return res.status(401).json({message: "No settings found"});
-      return res.status(200).json({settings: r});
+      return res.status(200).json({ settings: r });
     } catch (error) {
       console.error("Error: " + error);
-      return res.status(501).json({message: "server error occured"})
+      return res.status(500).json({ message: "Server error occurred" });
     }
   })
 
   // update settings
 
-  app.patch(`${api}/auth/patch/settings`, async (req:Request, res:Response) => {
+  app.patch(`${api}/auth/patch/settings`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
-      const {setting, settingVal} = req.body;
-      if(!setting || !settingVal) return res.status(402).json({message: "Invalid setting or value"});
+      const { setting, settingVal } = req.body;
+      if (!setting || !settingVal) {
+        return res.status(400).json({ message: "Invalid setting or value" });
+      }
       const r = await updateSetting(setting, settingVal);
-      if(!r) return res.status(401).json({message: "error updating settings"});
-      return res.status(200).json({message: "settings updated"});
+      if (!r) {
+        return res.status(404).json({ message: "Setting not found" });
+      }
+      return res.status(200).json({ message: "Settings updated" });
     } catch (error) {
       console.error("Error: " + error);
-      return res.status(501).json({message: "server error occured"})
+      return res.status(500).json({ message: "Server error occurred" });
     }
-  }
-  )
+  })
 
   // UpdateSettings
 
-  app.put(`${api}/auth/update/settings`, async (req:Request, res:Response) => {
+  app.put(`${api}/auth/update/settings`, AuthmiddleWare, async (req: Request, res: Response) => {
     try {
       const body = req.body;
       const settings = {
@@ -293,16 +282,17 @@ app.get(`${api}/auth/admin`, AuthmiddleWare, async (req: Request, res: Response)
         createdAt: body.createdAt ? new Date(body.createdAt) : undefined,
         updatedAt: body.updatedAt ? new Date(body.updatedAt) : undefined,
       };
-      if(!settings) return res.status(402).json({message: "Invalid settings data"});
       const r = await UpdateSettings(settings);
-      if(!r) return res.status(401).json({message: "error updating settings"});
-      return res.status(200).json({message: "settings updated"});
+      if (!r) {
+        return res.status(404).json({ message: "Settings not found" });
+      }
+      return res.status(200).json({ message: "Settings updated" });
     } catch (error) {
       console.error("Error: " + error);
-      return res.status(501).json({message: "server error occured"})
+      return res.status(500).json({ message: "Server error occurred" });
     }
-  }
-  ) 
+  })
+
 
 
 

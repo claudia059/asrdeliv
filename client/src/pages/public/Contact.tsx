@@ -206,10 +206,10 @@ export function Contact() {
                       Phone
                     </h3>
                     <a
-                      href={`tel:${settings.phone || "+234 800 000 0000"}`}
+                      href={`tel:${settings?.phone || "+234 800 000 0000"}`}
                       className="text-muted-foreground hover:text-primary transition-colors break-all"
                     >
-                      {settings.phone || "+234 800 000 0000"}
+                      {settings?.phone || "+234 800 000 0000"}
                     </a>
                   </div>
                 </div>
@@ -226,10 +226,10 @@ export function Contact() {
                       Email
                     </h3>
                     <a
-                      href={`mailto:${settings.email || "support@cac-agent.ng"}`}
+                      href={`mailto:${settings?.email || "support@cac-agent.ng"}`}
                       className="text-muted-foreground hover:text-primary transition-colors break-all text-sm"
                     >
-                      {settings.email || "support@cac-agent.ng"}
+                      {settings?.email || "support@cac-agent.ng"}
                     </a>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export function Contact() {
                       Address
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      {settings.address || "123 Business Way, Wuse 2, Abuja, FCT"}
+                      {settings?.address || "123 Business Way, Wuse 2, Abuja, FCT"}
                     </p>
                   </div>
                 </div>

@@ -1,14 +1,32 @@
-import { ReactNode } from "react";
-import { Link, useLocation } from "wouter";
+import { type ReactNode, useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { FileBadge, Phone, Mail, MapPin, Menu, X, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSettingsMap } from "@/hooks/use-settings";
-import { useState } from "react";
+import { useFetchSettings } from "@/hooks/use-settings";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
-  const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { settings } = useSettingsMap();
+  const [settings, setSettings] = useState({
+    phone: "",
+    email: "",
+    address: "",
+  });
+
+  useEffect(() => {
+    let isActive = true;
+
+    useFetchSettings().then((data) => {
+      if (isActive && data) {
+        setSettings(data);
+      }
+    }).catch((error) => {
+      console.error("Failed to load settings:", error);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const closeMenu = () => setMobileMenuOpen(false);
 
@@ -31,7 +49,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       <header className="glass-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <Link href="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-2 group">
               <div className="bg-primary p-2 rounded-xl text-primary-foreground group-hover:scale-105 transition-transform">
                 <FileBadge className="w-6 h-6" />
               </div>
@@ -40,16 +58,24 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8 font-medium">
-              <Link href="/" className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : 'text-foreground'}`}>Home</Link>
-              <Link href="/services" className={`hover:text-primary transition-colors ${location === '/services' ? 'text-primary' : 'text-foreground'}`}>Services</Link>
-              <Link href="/blog" className={`hover:text-primary transition-colors ${location.startsWith('/blog') ? 'text-primary' : 'text-foreground'}`}>Blog</Link>
-              <Link href="/contact" className={`hover:text-primary transition-colors ${location === '/contact' ? 'text-primary' : 'text-foreground'}`}>Contact</Link>
+              <NavLink to="/" className={({ isActive }) => `hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                Home
+              </NavLink>
+              <NavLink to="/services" className={({ isActive }) => `hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                Services
+              </NavLink>
+              <NavLink to="/blog" className={({ isActive }) => `hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                Blog
+              </NavLink>
+              <NavLink to="/contact" className={({ isActive }) => `hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                Contact
+              </NavLink>
             </nav>
 
             <div className="hidden md:flex items-center gap-4">
-              <a href="/login">
+              <Link to="/login">
                 <Button variant="outline" className="font-semibold rounded-full px-6">Client Portal</Button>
-              </a>
+              </Link>
               <Button className="rounded-full px-6 shadow-lg shadow-primary/25 hover:shadow-primary/40 font-semibold gap-2">
                 Start Registration <ArrowRight className="w-4 h-4" />
               </Button>
@@ -66,14 +92,14 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-card border-b border-border p-4 flex flex-col gap-4 shadow-xl absolute w-full z-40 top-[116px] md:top-20">
-          <Link href="/" onClick={closeMenu} className="font-medium p-2 text-foreground">Home</Link>
-          <Link href="/services" onClick={closeMenu} className="font-medium p-2 text-foreground">Services</Link>
-          <Link href="/blog" onClick={closeMenu} className="font-medium p-2 text-foreground">Blog</Link>
-          <Link href="/contact" onClick={closeMenu} className="font-medium p-2 text-foreground">Contact</Link>
+          <Link to="/" onClick={closeMenu} className="font-medium p-2 text-foreground">Home</Link>
+          <Link to="/services" onClick={closeMenu} className="font-medium p-2 text-foreground">Services</Link>
+          <Link to="/blog" onClick={closeMenu} className="font-medium p-2 text-foreground">Blog</Link>
+          <Link to="/contact" onClick={closeMenu} className="font-medium p-2 text-foreground">Contact</Link>
           <div className="h-px bg-border my-2"></div>
-          <a href="/login" onClick={closeMenu} className="block">
+          <Link to="/login" onClick={closeMenu} className="block">
             <Button variant="outline" className="w-full justify-center rounded-xl mb-2">Client Portal</Button>
-          </a>
+          </Link>
           <Button className="w-full justify-center rounded-xl gap-2">
             Start Registration <ArrowRight className="w-4 h-4" />
           </Button>
@@ -103,10 +129,10 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <div>
             <h3 className="text-white font-bold text-lg mb-4 font-display">Quick Links</h3>
             <ul className="flex flex-col gap-3">
-              <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
-              <li><Link href="/services" className="hover:text-primary transition-colors">Our Services</Link></li>
-              <li><Link href="/blog" className="hover:text-primary transition-colors">Latest News</Link></li>
-              <li><Link href="/admin" className="hover:text-primary transition-colors">Admin Dashboard</Link></li>
+              <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
+              <li><Link to="/services" className="hover:text-primary transition-colors">Our Services</Link></li>
+              <li><Link to="/blog" className="hover:text-primary transition-colors">Latest News</Link></li>
+              <li><Link to="/admin" className="hover:text-primary transition-colors">Admin Dashboard</Link></li>
             </ul>
           </div>
 

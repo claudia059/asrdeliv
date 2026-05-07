@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { Calendar, ChevronRight } from "lucide-react";
 import { usePosts } from "@/hooks/use-posts";
@@ -30,7 +30,7 @@ export function Blog() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
-              <Link key={post.id} href={`/blog/${post.id}`}>
+              <Link key={post.id} to={`/blog/${post.id}`}>
                 <article className="bg-card h-full rounded-3xl p-6 sm:p-8 border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:border-primary/30 transition-all duration-300 flex flex-col group cursor-pointer">
                   <div className="flex items-center gap-2 text-sm text-primary font-semibold mb-4 bg-primary/10 w-fit px-3 py-1 rounded-full">
                     <Calendar className="w-4 h-4" />

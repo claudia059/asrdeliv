@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, Navigate, useNavigate } from "react-router-dom";
 import { Sidebar } from "./sidebar";
 import { Footer } from "./footer";
 import { ThemeConfigurator } from "@/components/theme-configurator";
@@ -38,11 +38,11 @@ export default function AdminLayout() {
   } ,[]);
 
   if (isLoading) {
-    return <LoaderIcon/>;
+    return <LoaderIcon />;
   }
-  
-  if(!user){
-    return navigation("/login", { replace: true });
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
   
   const HandleLogout = async function (){

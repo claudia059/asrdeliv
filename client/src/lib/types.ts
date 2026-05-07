@@ -52,9 +52,22 @@ export interface SettingsState {
   companyPhone: string;
   companyEmail: string;
   TrackingPrefix: string;
+  phone?: string;
+  email?: string;
+  address?: string;
 }
 
-
+export interface ProjectData {
+  id: string;
+  name: string;
+  company: string;
+  icon: string;
+  iconColor: string;
+  members: ProjectMember[];
+  budget: string;
+  completion: number;
+  status: string;
+}
 
 export interface Shipment {
   id: string;

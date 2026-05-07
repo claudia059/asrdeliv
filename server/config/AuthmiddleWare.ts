@@ -7,7 +7,7 @@ export const AuthmiddleWare = async (
   next: NextFunction
 ) => {
   try {
-    const token = req?.cookies?.tooken;
+    const token = req?.cookies?.token;
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });

@@ -96,22 +96,21 @@ export type Package = typeof packages.$inferSelect;
 
 export const insertPackage = async (
   packageData: InsertPackage
-): Promise<Package> => {
+): Promise<Package | null> => {
   try {
     const existing = await getPackageByTrackingNumber(
       packageData.trackingNumber
     );
 
     if (existing) {
-      return 0 as unknown as Package; // Return a default value or handle it as needed
+      return null;
     }
 
     const [newPackage] = await db.insert(packages).values(packageData).returning();
-
-    return newPackage;
+    return newPackage ?? null;
   } catch (error) {
     console.error("Error inserting package:", error);
-    return 0 as unknown as Package; // Return a default value or handle it as needed
+    return null;
   }
 };
 
