@@ -5,7 +5,7 @@ services:
     plan: standard
     buildCommand: >
       cd server &&
-      npm install &&
+      npm install --include=dev &&
       npm run build
     startCommand: cd server && node dist/index.js
     envVars:
