@@ -45,28 +45,11 @@ export default defineConfig({
     sourcemap: false,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            // Isolate heavy dependencies first
-            if (id.includes('recharts')) return 'vendor-charts';
-            if (id.includes('framer-motion')) return 'vendor-motion';
-            if (id.includes('embla-carousel')) return 'vendor-carousel';
-            if (id.includes('leaflet')) return 'vendor-leaflet';
-            if (id.includes('react-leaflet')) return 'vendor-leaflet';
-            
-            // UI components
-            if (id.includes('@radix-ui')) return 'vendor-radix';
-            
-            // Forms and queries
-            if (id.includes('@tanstack/react-query')) return 'vendor-query';
-            if (id.includes('react-hook-form')) return 'vendor-forms';
-            
-            // Everything else stays together to avoid circular deps
-            if (id.includes('react')) return 'vendor-react';
-            return 'vendor-other';
-          }
-        },
+      onwarn(warning, warn) {
+        if (warning.code === 'SOURCEMAP_ERROR') {
+          return;
+        }
+        warn(warning);
       },
     },
   },
