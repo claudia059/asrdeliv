@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: asr-server
+    runtime: node
+    plan: standard
+    buildCommand: >
+      cd server &&
+      npm install &&
+      npm run build
+    startCommand: node dist/index.mjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    region: oregon
