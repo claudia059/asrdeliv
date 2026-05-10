@@ -1,55 +1,105 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Switch, Route, Router as WouterRouter } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import Notifications from "@/pages/notifications";
-import SignIn from "@/pages/auth/sign-in";
-import SignUp from "@/pages/auth/sign-up";
+import { AuthProvider } from "@/lib/auth";
+import { AuthGuard } from "@/components/auth-guard";
+import { setAuthTokenGetter } from "@/lib/api-client-react/src";
 import NotFound from "@/pages/not-found";
-import Home from "./pages/public/Home";
-import Track from "./pages/public/Track";
-import AdminLayout from "./components/admin/layout/AdminLayout";
-import Settings from "@/pages/admin/settings";
-import Shippments from "@/pages/admin/shippments";
-import NewShipment from "./pages/admin/new-shipment";
-import EditShipment from "./pages/admin/edit-shipment";
-import Profile from "./pages/admin/profile";
+import HomePage from "@/pages/home";
+import TrackPage from "@/pages/track";
+import AboutPage from "@/pages/about";
+import ContactPage from "@/pages/contact";
+import AdminLoginPage from "@/pages/login";
+import AdminDashboardPage from "@/pages/admin/dashboard";
+import AdminShipmentsPage from "@/pages/admin/shipments";
+import ShipmentDetailPage from "@/pages/admin/shipment-detail";
+import ShipmentFormPage from "@/pages/admin/shipment-form";
+import AdminSettingsPage from "@/pages/admin/settings";
 
+setAuthTokenGetter(() => localStorage.getItem("asr_token"));
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 30_000, retry: 1 },
+  },
+});
 
 function Router() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/track/:id" element={<Track />} />
+    <Switch>
+      {/* Public */}
+      <Route path="/" component={HomePage} />
+      <Route path="/track" component={TrackPage} />
+      <Route path="/track/:trackingNumber" component={TrackPage} />
+      <Route path="/about" component={AboutPage} />
+      <Route path="/contact" component={ContactPage} />
 
-      <Route path="/login" element={<SignIn />} />
-      <Route path="/register" element={<SignUp />} />
+      {/* Admin auth */}
+      <Route path="/asr/login" component={AdminLoginPage} />
 
-      {/* proctected routes */}
-      <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="shippments" element={<Shippments />} />
-          <Route path="new-shipment" element={<NewShipment />} />
-          <Route path="edit-shipment/:id" element={<EditShipment />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="profile" element={<Profile />} />
+      {/* Admin protected */}
+      <Route path="/admin">
+        {() => (
+          <AuthGuard>
+            <AdminDashboardPage />
+          </AuthGuard>
+        )}
       </Route>
-    
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+      <Route path="/admin/shipments">
+        {() => (
+          <AuthGuard>
+            <AdminShipmentsPage />
+          </AuthGuard>
+        )}
+      </Route>
+      <Route path="/admin/shipments/new">
+        {() => (
+          <AuthGuard>
+            <ShipmentFormPage isEdit={false} />
+          </AuthGuard>
+        )}
+      </Route>
+      <Route path="/admin/shipments/:id/edit">
+        {() => (
+          <AuthGuard>
+            <ShipmentFormPage isEdit={true} />
+          </AuthGuard>
+        )}
+      </Route>
+      <Route path="/admin/shipments/:id">
+        {() => (
+          <AuthGuard>
+            <ShipmentDetailPage />
+          </AuthGuard>
+        )}
+      </Route>
+      <Route path="/admin/settings">
+        {() => (
+          <AuthGuard>
+            <AdminSettingsPage />
+          </AuthGuard>
+        )}
+      </Route>
+
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
 function App() {
   return (
-    <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <div id="google_translate_element" style={{ display: "none" }} />
+            <Router />
+          </WouterRouter>
           <Toaster />
-          <Router />
         </TooltipProvider>
-    </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
