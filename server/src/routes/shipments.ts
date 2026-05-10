@@ -167,7 +167,7 @@ router.get("/shipments/:id", requireAuth, async (req, res): Promise<void> => {
 
 // Download receipt PDF (auth protected)
 router.get("/shipments/:id/receipt", requireAuth, async (req, res): Promise<void> => {
-  const id = parseInt(req.params?.id, 10);
+  const id = parseInt(Array.isArray(req.params?.id) ? req.params.id[0] : (req.params?.id || ""), 10);
   if (isNaN(id)) { res.status(400).json({ error: "Invalid id" }); return; }
 
   const [shipment] = await db.select().from(shipmentsTable).where(eq(shipmentsTable.id, id)).limit(1);
@@ -190,7 +190,7 @@ router.get("/shipments/:id/receipt", requireAuth, async (req, res): Promise<void
 
 // Download invoice PDF (auth protected)
 router.get("/shipments/:id/invoice", requireAuth, async (req, res): Promise<void> => {
-  const id = parseInt(req.params?.id, 10);
+  const id = parseInt(Array.isArray(req.params?.id) ? req.params.id[0] : (req.params?.id || ""), 10);
   if (isNaN(id)) { res.status(400).json({ error: "Invalid id" }); return; }
 
   const [shipment] = await db.select().from(shipmentsTable).where(eq(shipmentsTable.id, id)).limit(1);

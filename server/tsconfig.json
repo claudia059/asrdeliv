@@ -20,7 +20,7 @@
     "skipLibCheck": true,
     "target": "es2022",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "types": ["node"],
     "paths": {
     "@/*": ["./src/*"],
