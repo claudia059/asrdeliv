@@ -45,6 +45,14 @@ export default defineConfig({
     sourcemap: false,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          maps: ['leaflet', 'react-leaflet'],
+          charts: ['recharts'],
+          vendor: ['axios', 'lodash'],
+        },
+      },
       onwarn(warning, warn) {
         if (warning.code === 'SOURCEMAP_ERROR') {
           return;
