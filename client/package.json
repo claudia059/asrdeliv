@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/asr-logistics",
+  "name": "asr-logistics",
   "version": "0.0.0",
   "private": true,
   "type": "module",
