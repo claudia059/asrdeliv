@@ -92,7 +92,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <WouterRouter>
           <div id="google_translate_element" style={{ display: "none" }} />
             <Router />
           </WouterRouter>
