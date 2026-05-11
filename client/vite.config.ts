@@ -52,53 +52,41 @@ export default defineConfig({
 
     rollupOptions: {
       output: {
-        manualChunks(id) {
+  manualChunks(id) {
 
-          // React core
-          if (
-            id.includes("react") ||
-            id.includes("react-dom") ||
-            id.includes("scheduler")
-          ) {
-            return "react-vendor";
-          }
+    // node_modules splitting
+    if (id.includes("node_modules")) {
 
-          // Router
-          if (id.includes("react-router")) {
-            return "router";
-          }
+      // maps ecosystem
+      if (
+        id.includes("leaflet") ||
+        id.includes("react-leaflet")
+      ) {
+        return "maps";
+      }
 
-          // Maps
-          if (
-            id.includes("leaflet") ||
-            id.includes("react-leaflet")
-          ) {
-            return "maps";
-          }
+      // charts ecosystem
+      if (
+        id.includes("recharts") ||
+        id.includes("chart.js")
+      ) {
+        return "charts";
+      }
 
-          // Charts
-          if (
-            id.includes("recharts") ||
-            id.includes("chart.js")
-          ) {
-            return "charts";
-          }
+      // utilities
+      if (
+        id.includes("lodash") ||
+        id.includes("axios") ||
+        id.includes("date-fns")
+      ) {
+        return "utils";
+      }
 
-          // Large utility libraries
-          if (
-            id.includes("lodash") ||
-            id.includes("date-fns") ||
-            id.includes("axios")
-          ) {
-            return "utils";
-          }
-
-          // Everything else from node_modules
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
-        },
-      },
+      // everything else
+      return "vendor";
+    }
+  },
+},
 
       onwarn(warning, warn) {
         if (warning.code === 'SOURCEMAP_ERROR') {
