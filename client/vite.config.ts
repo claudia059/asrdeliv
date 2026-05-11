@@ -31,6 +31,7 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
@@ -38,38 +39,88 @@ export default defineConfig({
     },
     dedupe: ["react", "react-dom"],
   },
+
   root: path.resolve(import.meta.dirname),
+
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
     sourcemap: false,
+
+    // optional
     chunkSizeWarningLimit: 600,
+
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          maps: ['leaflet', 'react-leaflet'],
-          charts: ['recharts'],
-          vendor: ['axios', 'lodash'],
+        manualChunks(id) {
+
+          // React core
+          if (
+            id.includes("react") ||
+            id.includes("react-dom") ||
+            id.includes("scheduler")
+          ) {
+            return "react-vendor";
+          }
+
+          // Router
+          if (id.includes("react-router")) {
+            return "router";
+          }
+
+          // Maps
+          if (
+            id.includes("leaflet") ||
+            id.includes("react-leaflet")
+          ) {
+            return "maps";
+          }
+
+          // Charts
+          if (
+            id.includes("recharts") ||
+            id.includes("chart.js")
+          ) {
+            return "charts";
+          }
+
+          // Large utility libraries
+          if (
+            id.includes("lodash") ||
+            id.includes("date-fns") ||
+            id.includes("axios")
+          ) {
+            return "utils";
+          }
+
+          // Everything else from node_modules
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
         },
       },
+
       onwarn(warning, warn) {
         if (warning.code === 'SOURCEMAP_ERROR') {
           return;
         }
+
         warn(warning);
       },
     },
   },
+
   server: {
     port,
     strictPort: true,
     host: "0.0.0.0",
     allowedHosts: true,
+
     fs: {
       strict: true,
     },
   },
+
   preview: {
     port,
     host: "0.0.0.0",
