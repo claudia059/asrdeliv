@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "npm install --include=dev && tsc",
-    "start": "node index.js",
+    "start": "node dist/src/index.js",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "node ./scripts/db-migrate.js",
