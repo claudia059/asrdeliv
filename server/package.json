@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "npm install --include=dev && tsc",
     "start": "node index.js",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "push": "drizzle-kit push --config ./drizzle.config.ts",
