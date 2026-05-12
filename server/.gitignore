@@ -8,6 +8,7 @@ out-tsc
 .expo
 .expo-shared
 .env
+server/.env
 # dependencies
 node_modules
 
