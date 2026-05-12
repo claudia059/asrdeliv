@@ -91,7 +91,7 @@ export default function AdminSettingsPage() {
 
     setSavingProfile(true);
     mutation.mutate(
-      { updateProfileBody: { name: name.trim(), email: email.trim() } },
+      { data: { name: name.trim(), email: email.trim() } },
       {
         onSuccess: (updated) => {
           toast({ title: "Profile updated", description: "Your name and email have been saved." });
@@ -116,7 +116,7 @@ export default function AdminSettingsPage() {
 
     setSavingPassword(true);
     mutation.mutate(
-      { updateProfileBody: { currentPassword, newPassword } },
+      { data: { currentPassword, newPassword } },
       {
         onSuccess: () => {
           toast({ title: "Password changed", description: "Your password has been updated." });

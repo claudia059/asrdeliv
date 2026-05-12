@@ -9,8 +9,8 @@ import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("admin@asrlogistics.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("xxxxx@axxxxxx.com");
+  const [password, setPassword] = useState("00000000");
   const [showPassword, setShowPassword] = useState(false);
   const [, setLocation] = useLocation();
   const { login, token } = useAuth();
