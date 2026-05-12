@@ -1,6 +1,6 @@
-import { httpServer } from "./app";
-import { logger } from "./lib/logger";
-import seed from "./lib/seed";
+import { httpServer } from "./app.js";
+import { logger } from "./lib/logger.js";
+import seed from "./lib/seed.js";
 
 const rawPort = process.env["PORT"];
 
@@ -18,16 +18,11 @@ if (Number.isNaN(port) || port <= 0) {
 
 seed()
   .then(() => {
-    httpServer.listen(port, (err?: Error) => {
-      if (err) {
-        logger.error({ err }, "Error listening on port");
-        process.exit(1);
-      }
-
+    httpServer.listen(port, () => {
       logger.info({ port }, "Server listening");
     });
   })
-  .catch((err) => {
+  .catch((err: Error) => {
     logger.error({ err }, "Error seeding database");
     process.exit(1);
   });

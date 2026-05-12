@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, shipmentsTable, trackingHistoryTable } from "../db/src";
+import { db, shipmentsTable, trackingHistoryTable } from "../db/src/index.js";
 import { eq } from "drizzle-orm";
 
 const router: IRouter = Router();
@@ -35,7 +35,7 @@ router.get("/track/:trackingNumber", async (req, res): Promise<void> => {
     estimatedDelivery: shipment.estimatedDelivery ?? null,
     createdAt: shipment.createdAt.toISOString(),
     updatedAt: shipment.updatedAt.toISOString(),
-    history: history.map((h) => ({
+    history: history.map((h: any) => ({
       ...h,
       latitude: h.latitude ?? null,
       longitude: h.longitude ?? null,

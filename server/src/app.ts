@@ -5,8 +5,8 @@ import pinoHttp from "pino-http";
 import { rateLimit } from "express-rate-limit";
 import { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
-import router from "./routes";
-import { logger } from "./lib/logger";
+import router from "./routes/index.js";
+import { logger } from "./lib/logger.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -21,17 +21,17 @@ export const io = new SocketServer(httpServer, {
 
 app.use(helmet({ contentSecurityPolicy: true }));
 app.use(
-  pinoHttp({
+  (pinoHttp as any)({
     logger,
     serializers: {
-      req(req) {
+      req(req: any) {
         return {
           id: req.id,
           method: req.method,
           url: req.url?.split("?")[0],
         };
       },
-      res(res) {
+      res(res: any) {
         return {
           statusCode: res.statusCode,
         };

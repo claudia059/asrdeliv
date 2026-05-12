@@ -1,24 +1,24 @@
 import { Router, type IRouter } from "express";
-import { db, shipmentsTable, trackingHistoryTable } from "../db/src";
+import { db, shipmentsTable, trackingHistoryTable } from "../db/src/index.js";
 import { eq, like, or, desc, sql, count } from "drizzle-orm";
 import {
   CreateShipmentBody,
   UpdateShipmentBody,
   ListShipmentsQueryParams,
   AddTrackingHistoryBody,
-} from "../api-zod/src";
-import { requireAuth, generateTrackingNumber } from "../lib/auth";
-import { io } from "../app";
+} from "../api-zod/src/index.js";
+import { requireAuth, generateTrackingNumber } from "../lib/auth.js";
+import { io } from "../app.js";
 import {
   sendShipmentRegisteredEmail,
   sendShipmentUpdatedEmail,
   type ShipmentEmailData,
-} from "../lib/email";
-import { generateReceiptPdf, generateInvoicePdf } from "../lib/pdf";
+} from "../lib/email.js";
+import { generateReceiptPdf, generateInvoicePdf } from "../lib/pdf.js";
 
 const router: IRouter = Router();
 
-function formatShipment(s: any) {
+function formatShipment(s: any): any {
   return {
     ...s,
     latitude: s.latitude ?? null,
@@ -113,14 +113,14 @@ router.get("/shipments/export/csv", requireAuth, async (req, res): Promise<void>
     "Status", "Current Location", "Weight", "Type", "ETA", "Created"
   ];
 
-  const rows = shipments.map((s) => [
+  const rows = shipments.map((s: any) => [
     s.trackingNumber, s.senderName, s.receiverName, s.origin, s.destination,
     s.status, s.currentLocation, s.weight ?? "", s.luggageType,
     s.estimatedDelivery ?? "", s.createdAt.toISOString()
   ]);
 
   const csv = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+    .map((row: any) => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
     .join("\n");
 
   res.setHeader("Content-Type", "text/csv");
@@ -156,7 +156,7 @@ router.get("/shipments/:id", requireAuth, async (req, res): Promise<void> => {
 
   res.json({
     ...formatShipment(shipment),
-    history: history.map((h) => ({
+    history: history.map((h: any) => ({
       ...h,
       latitude: h.latitude ?? null,
       longitude: h.longitude ?? null,
@@ -181,7 +181,7 @@ router.get("/shipments/:id/receipt", requireAuth, async (req, res): Promise<void
 
   generateReceiptPdf(res, {
     ...formatShipment(shipment),
-    history: history.map(h => ({
+    history: history.map((h: any) => ({
       ...h,
       createdAt: h.createdAt.toISOString(),
     })),
@@ -204,7 +204,7 @@ router.get("/shipments/:id/invoice", requireAuth, async (req, res): Promise<void
 
   generateInvoicePdf(res, {
     ...formatShipment(shipment),
-    history: history.map(h => ({
+    history: history.map((h: any) => ({
       ...h,
       createdAt: h.createdAt.toISOString(),
     })),
@@ -227,7 +227,7 @@ router.get("/shipments/:id/receipt/public", async (req, res): Promise<void> => {
 
   generateReceiptPdf(res, {
     ...formatShipment(shipment),
-    history: history.map(h => ({
+    history: history.map((h: any) => ({
       ...h,
       createdAt: h.createdAt.toISOString(),
     })),

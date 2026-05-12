@@ -1,8 +1,8 @@
 import { Router, type IRouter } from "express";
-import { db, shipmentsTable, trackingHistoryTable } from "../db/src";
+import { db, shipmentsTable, trackingHistoryTable } from "../db/src/index.js";
 import { eq, desc, and, gte, sql, count } from "drizzle-orm";
-import { requireAuth } from "../lib/auth";
-import { GetRecentActivityQueryParams } from "../api-zod/src";
+import { requireAuth } from "../lib/auth.js";
+import { GetRecentActivityQueryParams } from "../api-zod/src/index.js";
 
 const router: IRouter = Router();
 
@@ -47,7 +47,7 @@ router.get("/dashboard/activity", requireAuth, async (req, res): Promise<void> =
     .limit(limit);
 
   res.json(
-    history.map((h) => ({
+    history.map((h: any) => ({
       id: h.id,
       trackingNumber: h.trackingNumber,
       action: "Status Update",
@@ -76,7 +76,7 @@ router.get("/dashboard/chart", requireAuth, async (_req, res): Promise<void> => 
     .orderBy(sql`DATE(created_at)`);
 
   res.json(
-    rows.map((r) => ({
+    rows.map((r: any) => ({
       date: r.date,
       total: r.total,
       delivered: r.delivered ?? 0,
